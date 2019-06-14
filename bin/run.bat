@@ -1,0 +1,1 @@
+search.exe -proxy http://127.0.0.1:1087 -search rct 510
