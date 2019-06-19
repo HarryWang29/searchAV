@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -108,12 +109,18 @@ func (s *search) getTitleAndMagnet(doc *goquery.Document) {
 	w := bufio.NewWriter(f)
 
 	fmt.Fprintln(w, fmt.Sprintf("search at: %s", time.Now().Format("2006-01-02 15:04:05")))
+	if runtime.GOOS == "windows" {
+		fmt.Fprintln(w, fmt.Sprintf("\r\n"))
+	}
 
 	for _, t := range titles {
 		magnet, _ := s.magnetMap.Get(t)
 		fmt.Printf("%s:%s\n", t, magnet.(string))
 		if err == nil {
 			fmt.Fprintln(w, fmt.Sprintf("%s:%s", t, magnet.(string)))
+			if runtime.GOOS == "windows" {
+				fmt.Fprintln(w, fmt.Sprintf("\r\n"))
+			}
 		}
 	}
 	w.Flush()
