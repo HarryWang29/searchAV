@@ -138,12 +138,13 @@ func (s *search) getMagnet(link string) string {
 
 func (s *search) getDoc(link string) (*goquery.Document, error) {
 	urli := url.URL{}
-	urlproxy, _ := urli.Parse(s.proxy)
 
-	client := &http.Client{
-		Transport: &http.Transport{
+	client := &http.Client{}
+	if s.proxy != "" {
+		urlproxy, _ := urli.Parse(s.proxy)
+		client.Transport = &http.Transport{
 			Proxy: http.ProxyURL(urlproxy),
-		},
+		}
 	}
 	//提交请求
 	reqest, err := http.NewRequest("GET", link, nil)

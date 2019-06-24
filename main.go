@@ -13,7 +13,7 @@ var resultFile string
 const Url = "https://btsow.pw/search/"
 
 func init() {
-	flag.StringVar(&proxyAddr, "proxy", "127.0.0.1:1087", "")
+	flag.StringVar(&proxyAddr, "proxy", "", "")
 	flag.StringVar(&keyWord, "search", "", "")
 	flag.StringVar(&resultFile, "save", "./result.txt", "")
 }
@@ -24,7 +24,12 @@ func main() {
 		fmt.Printf("write search\n")
 		return
 	}
-	fmt.Printf("search:%s\nproxy:%s\n", keyWord, proxyAddr)
+	fmt.Printf("search:%s\n", keyWord)
+	if proxyAddr == "" {
+		fmt.Printf("proxy:为空，不使用代理，请开启ss/ssr全局模式\n")
+	} else {
+		fmt.Printf("proxy:%s\n", keyWord)
+	}
 	search.NewSearch(
 		proxyAddr,
 		keyWord,
