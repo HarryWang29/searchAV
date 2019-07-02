@@ -28,7 +28,7 @@ func main() {
 	if proxyAddr == "" {
 		fmt.Printf("proxy:为空，不使用代理，请开启ss/ssr全局模式\n")
 	} else {
-		fmt.Printf("proxy:%s\n", keyWord)
+		fmt.Printf("proxy:%s\n", proxyAddr)
 	}
 	search.NewSearch(
 		proxyAddr,

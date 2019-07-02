@@ -2,6 +2,7 @@ package search
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	cmap "github.com/orcaman/concurrent-map"
@@ -52,14 +53,14 @@ func (s *search) Run() {
 
 func (s *search) setHeader(header *http.Header) {
 	//增加header选项
-	header.Add("Host", "btso.pw")
+	header.Add("Host", "btsow.pw")
 	header.Add("Connection", "keep-alive")
 	header.Add("Pragma", "no-cache")
 	header.Add("Cache-Control", "no-cache")
 	header.Add("Upgrade-Insecure-Requests", "1")
 	header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36")
 	header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
-	header.Add("Referer", "https://btso.pw/search/")
+	header.Add("Referer", "https://btsow.pw/search/")
 	//header.Add("Accept-Encoding", "gzip, deflate, br")
 	header.Add("Accept-Language", "zh-CN,zh;q=0.9,zh-TW;q=0.8")
 	header.Add("Cookie", "__test; _ga=GA1.2.613298755.1516200848; 494668b4c0ef4d25bda4e75c27de2817=326dec85-8387-4503-80a9-9d0c7cc7ee40%3A2%3A1; a=9nbjphmhasplh6ygdxayf4p0xt2u2ycc; _gid=GA1.2.950150230.1516713710; AD_enterTime=1516713710; AD_adca_b_SM_T_728x90=0; AD_jav_b_SM_T_728x90=0; AD_javu_b_SM_T_728x90=0; AD_wav_b_SM_T_728x90=0; AD_wwwp_b_SM_T_728x90=0; AD_adst_b_SM_T_728x90=1; __PPU_SESSION_1_470916_false=1516713723903|1|1516713723903|1|1; AD_exoc_b_SM_T_728x90=1; AD_clic_b_POPUNDER=2")
@@ -97,14 +98,13 @@ func (s *search) getTitleAndMagnet(doc *goquery.Document) {
 	wg.Wait()
 	var f *os.File
 	var exist = true
-	var err error
 	if _, err := os.Stat(s.resultFile); os.IsNotExist(err) {
 		exist = false
 	}
 	if exist { //如果文件存在
-		f, err = os.OpenFile(s.resultFile, os.O_APPEND, 0666) //打开文件
+		f, _ = os.OpenFile(s.resultFile, os.O_APPEND, 0666) //打开文件
 	} else {
-		f, err = os.Create(s.resultFile) //创建文件
+		f, _ = os.Create(s.resultFile) //创建文件
 	}
 	w := bufio.NewWriter(f)
 
@@ -113,16 +113,15 @@ func (s *search) getTitleAndMagnet(doc *goquery.Document) {
 		fmt.Fprintln(w, fmt.Sprintf("\r\n"))
 	}
 
-	for _, t := range titles {
-		magnet, _ := s.magnetMap.Get(t)
-		fmt.Printf("%s:%s\n", t, magnet.(string))
-		if err == nil {
-			fmt.Fprintln(w, fmt.Sprintf("%s:%s", t, magnet.(string)))
-			if runtime.GOOS == "windows" {
-				fmt.Fprintln(w, fmt.Sprintf("\r\n"))
-			}
-		}
+	m, _ := json.Marshal(s.magnetMap)
+	fmt.Printf("%s\n", m)
+	fmt.Fprintln(w, fmt.Sprintf("%s", m))
+	if runtime.GOOS == "windows" {
+		fmt.Fprintln(w, fmt.Sprintf("\r\n"))
+	} else {
+		fmt.Fprintln(w, fmt.Sprintf("\n"))
 	}
+
 	w.Flush()
 	f.Close()
 }
