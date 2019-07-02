@@ -5,6 +5,8 @@
 ## 使用方法
 ### windows
 右键`run.bat`点击`编辑`，修改`proxy`与`search`保存退出，双击`run.bat`运行，获得结果后会产生`result.txt`文件，内有链接
+
+由于Windows中命令行并不是很好使用，于是凑合的写了个界面，不接受修改界面的要求，界面[下载地址](https://github.com/harry890829/searchAV/releases)
 ### mac/linux
 ```bash
 sh build.sh
